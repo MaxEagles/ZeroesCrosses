@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +27,6 @@ public class DrawView extends View {
     private int winLineEndX;
     private int winLineEndY;
 
-
     public DrawView(Context context) {
         super(context);
         makeMarkup();
@@ -43,6 +43,9 @@ public class DrawView extends View {
             preparePaint(Color.BLUE, 20);
             canvas.drawLine(winLineStartX, winLineStartY, winLineEndX, winLineEndY, paint);
         }
+        if(game.isEnded()){
+            playSound(R.raw.ending);
+        }
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -56,9 +59,17 @@ public class DrawView extends View {
             game.changeCellState(row, column);
             game.changePlayer();
             checkEnd(row, column);
+            playSound(R.raw.sound);
             invalidate();
         }
         return true;
+    }
+
+    private void playSound(int id) {
+        if(MainActivity.isSoundOn) {
+            MediaPlayer sound = MediaPlayer.create(getContext(), id);
+            sound.start();
+        }
     }
 
     private int identifyColumn(float x) {
